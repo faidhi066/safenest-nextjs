@@ -1,0 +1,111 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-arm64-openssl-1.1.x", "darwin-arm64"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model debts {
+  debt_id             Int      @id @default(autoincrement())
+  user_id             Int
+  account_name        String?
+  current_balance     Decimal? @db.Decimal(10, 2)
+  interest_rate       Decimal? @db.Decimal(5, 2)
+  min_monthly_payment Decimal? @db.Decimal(10, 2)
+  users               users    @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model expenses {
+  expense_id       Int              @id @default(autoincrement())
+  user_id          Int
+  expense_category String?
+  monthly_amount   Decimal?         @db.Decimal(10, 2)
+  description      String?
+  timestamp        DateTime?        @db.Timestamptz(6)
+  transaction_type transaction_flow @default(OUT)
+  users            users            @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model financial_knowledge_definitions {
+  id                       Int                        @id @default(autoincrement())
+  category                 String
+  level                    Int
+  description              String
+  user_financial_knowledge user_financial_knowledge[]
+
+  @@unique([category, level])
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model income {
+  income_id      Int      @id @default(autoincrement())
+  user_id        Int
+  income_source  String?
+  monthly_income Decimal? @db.Decimal(10, 2)
+  description    String?
+  users          users    @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model user_financial_knowledge {
+  user_id                         Int
+  category                        String
+  level                           Int
+  financial_knowledge_definitions financial_knowledge_definitions @relation(fields: [category, level], references: [category, level])
+  users                           users                           @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([user_id, category])
+}
+
+model user_logins {
+  login_id      Int       @id @default(autoincrement())
+  user_id       Int
+  email         String    @unique
+  password_hash String
+  last_login    DateTime? @db.Timestamptz(6)
+  created_at    DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime? @default(now()) @db.Timestamptz(6)
+  users         users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user")
+
+  @@index([email], map: "idx_user_logins_email")
+  @@index([user_id], map: "idx_user_logins_user_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model users {
+  user_id                  Int                        @id
+  age                      Int?
+  num_children             Int?
+  marital_status           String?
+  retirement_status        String?
+  goals                    Json?
+  gender                   String?
+  savings                  Float?
+  debts                    debts[]
+  expenses                 expenses[]
+  income                   income[]
+  user_financial_knowledge user_financial_knowledge[]
+  user_logins              user_logins[]
+  users_insights           users_insights[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model users_insights {
+  insight_id Int      @id @default(autoincrement())
+  user_id    Int
+  insights   Json
+  updated_at DateTime @default(now()) @db.Timestamptz(6)
+  users      users    @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+enum transaction_flow {
+  IN
+  OUT
+}
