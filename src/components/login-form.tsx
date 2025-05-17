@@ -9,7 +9,7 @@ import { LoaderCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { login } from "@/actions/login";
+import { login } from "@/actions/login-nextauth";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -47,6 +47,7 @@ export function LoginForm({
 
     try {
       const data = await login(values);
+      console.log("Hahahah", data);
 
       if (data.errorEmail || data.errorPassword) {
         setErrorEmail(data.errorEmail);
@@ -58,8 +59,8 @@ export function LoginForm({
       }
     } catch (error) {
       console.error(error);
-      setErrorEmail("An error occurred during login.");
-      setErrorPassword("An error occurred during login.");
+      // setErrorEmail("An error occurred during login.");
+      // setErrorPassword("An error occurred during login.");
     }
   };
 
@@ -90,11 +91,11 @@ export function LoginForm({
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="grid gap-6">
               <div className="flex flex-col gap-4">
-                <Button variant="outline" className="w-full">
+                <Button variant="outline" className="w-full" disabled>
                   {/* Apple SVG icon */}
                   Login with Apple
                 </Button>
-                <Button variant="outline" className="w-full">
+                <Button variant="outline" className="w-full" disabled>
                   {/* Google SVG icon */}
                   Login with Google
                 </Button>

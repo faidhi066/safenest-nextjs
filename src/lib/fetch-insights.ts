@@ -1,9 +1,11 @@
 // lib/fetch-insights.ts
 import { RootInsights, RootInsightsSchema } from "@/schemas/insights.schema";
 
-const userId = parseInt(process.env.USER_ID as string);
+// const userId = parseInt(process.env.USER_ID as string);
 
-export async function fetchUserInsightsFromApi(): Promise<RootInsights> {
+export async function fetchUserInsightsFromApi(
+  userId: number
+): Promise<RootInsights> {
   const res = await fetch(
     `https://safenest-api.onrender.com/users/${userId}/insights/latest`,
     {

@@ -1,9 +1,11 @@
 import { db } from "@/lib/prisma";
 import { FullInsights, FullInsightsSchema } from "@/schemas/insights.schema";
 
-const userId = parseInt(process.env.USER_ID as string);
+// const userId = parseInt(process.env.USER_ID as string);
 
-export async function getUserInsightsById(): Promise<FullInsights> {
+export async function getUserInsightsById(
+  userId: number
+): Promise<FullInsights> {
   const record = await db.users_insights.findFirst({
     where: { user_id: userId },
     orderBy: { updated_at: "desc" },

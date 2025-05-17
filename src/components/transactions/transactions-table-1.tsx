@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { auth } from "@/auth";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -19,7 +20,14 @@ export const schema = z.object({
 });
 
 export async function TrxTable() {
-  const data: z.infer<typeof schema>[] = await getSchemaedExpensesByUser();
+  const session = await auth();
+
+  if (!session?.user) return null;
+
+  const data: z.infer<typeof schema>[] = await getSchemaedExpensesByUser(
+    parseInt(session.user.user_id)
+  );
+
   return (
     <div className="overflow-hidden rounded-lg border">
       <Table>

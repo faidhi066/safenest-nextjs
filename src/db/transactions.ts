@@ -16,21 +16,21 @@ const MONTHS = [
   "November",
   "December",
 ];
-const userId = parseInt(process.env.USER_ID as string);
+// const userId = parseInt(process.env.USER_ID as string);
 
-export async function getAllIncomesByUser() {
+export async function getAllIncomesByUser(userId: number) {
   const rawIncomes = await db.income.findMany();
   const incomes = rawIncomes.filter((e) => e.user_id === userId);
   return incomes;
 }
 
-export async function getAllExpensesByUser() {
+export async function getAllExpensesByUser(userId: number) {
   const rawExpenses = await db.expenses.findMany();
   const expenses = rawExpenses.filter((e) => e.user_id === userId);
   return expenses;
 }
 
-export async function getSchemaedExpensesByUser() {
+export async function getSchemaedExpensesByUser(userId: number) {
   const rawExpenses = await db.expenses.findMany();
   const expenses = rawExpenses
     .filter((item) => item.user_id === userId)
@@ -43,10 +43,10 @@ export async function getSchemaedExpensesByUser() {
   return expenses;
 }
 
-export async function getCashFlowSummaryByUser() {
-  const incomes = await getAllIncomesByUser();
+export async function getCashFlowSummaryByUser(userId: number) {
+  const incomes = await getAllIncomesByUser(userId);
 
-  const expenses = await getAllExpensesByUser();
+  const expenses = await getAllExpensesByUser(userId);
 
   // Create base map
   const monthlySummary = new Array(12).fill(null).map((_, index) => ({
@@ -79,8 +79,8 @@ export async function getCashFlowSummaryByUser() {
   return monthlySummary.slice(0, maxMonthIndex + 1);
 }
 
-export async function getCurrentMthNetCashFlowByUser() {
-  const cashFlow = await getCashFlowSummaryByUser();
+export async function getCurrentMthNetCashFlowByUser(userId: number) {
+  const cashFlow = await getCashFlowSummaryByUser(userId);
 
   const currentMonthName = new Date().toLocaleString("default", {
     month: "long",
@@ -101,22 +101,22 @@ function isSameMonth(date: Date, target: Date): boolean {
   );
 }
 
-export async function getCurrentMthTransactionsAmount() {
+export async function getCurrentMthTransactionsAmount(userId: number) {
   const today = new Date();
-  const expenses = (await getAllExpensesByUser()).filter(
+  const expenses = (await getAllExpensesByUser(userId)).filter(
     (e) => e.timestamp && isSameMonth(new Date(e.timestamp), today)
   );
 
-  const incomes = await getAllIncomesByUser();
+  const incomes = await getAllIncomesByUser(userId);
 
   return incomes.length + expenses.length;
 }
 
-export async function getPreviousMthTransactionsAmount() {
+export async function getPreviousMthTransactionsAmount(userId: number) {
   const now = new Date();
   const prevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1); // First day of previous month
 
-  const expenses = (await getAllExpensesByUser()).filter((e) => {
+  const expenses = (await getAllExpensesByUser(userId)).filter((e) => {
     if (!e.timestamp) return false;
     const ts = new Date(e.timestamp);
     return (
@@ -125,7 +125,7 @@ export async function getPreviousMthTransactionsAmount() {
     );
   });
 
-  const incomes = await getAllIncomesByUser();
+  const incomes = await getAllIncomesByUser(userId);
 
   return incomes.length + expenses.length;
 }

@@ -1,8 +1,8 @@
 import { db } from "@/lib/prisma";
 
-const userId = parseInt(process.env.USER_ID as string);
+// const userId = parseInt(process.env.USER_ID as string);
 
-export async function getUserProfileById() {
+export async function getUserProfileById(userId: number) {
   const userProfile = await db.users.findFirst({
     where: { user_id: userId },
   });

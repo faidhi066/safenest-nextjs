@@ -1,3 +1,4 @@
+import bcrypt from "bcryptjs";
 import { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 
@@ -16,6 +17,7 @@ export default {
 
         if (validatedFields.success) {
           const { email, password } = validatedFields.data;
+
           console.log("LOGGING IN API ROUTE -----");
 
           console.log(email, password);
@@ -30,9 +32,16 @@ export default {
           }
 
           console.log(user);
+          // OPTION 1
+          // If using hashed
+          const passwordMatch = await bcrypt.compare(
+            password,
+            user.password_hash
+          );
 
-          //   const passwordMatch = await bcrypt.compare(password, user.password);
-          const passwordMatch = password === user.password_hash;
+          // OPTION 2
+          // If using normal text password
+          //   const passwordMatch = password === user.password_hash;
           if (!passwordMatch) {
             return null;
           }

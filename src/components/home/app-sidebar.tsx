@@ -46,7 +46,7 @@ const data = {
   user: {
     name: "safenest",
     email: "user1@safenest.com",
-    avatar: "/avatars/shadcn.jpg",
+    avatar: "/shadcn/avatar.png",
   },
   navMain: [
     {
@@ -229,11 +229,31 @@ const data = {
   ],
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+interface UserDetails {
+  login_id: number;
+  user_id: string;
+  email: string;
+  password_hash: string;
+  last_login: Date;
+  created_at: Date;
+  updated_at: Date;
+}
+
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  userDetails: UserDetails;
+}
+
+export function AppSidebar({ userDetails, ...props }: AppSidebarProps) {
   const pathname = usePathname();
   if (pathname === "/" || pathname === "/login") {
     return <></>;
   }
+  const userAvatar = {
+    name: userDetails.email,
+    email: userDetails.email,
+    avatar: "/avatar.png",
+  };
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -268,7 +288,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarContent>
 
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={userAvatar} />
       </SidebarFooter>
     </Sidebar>
   );

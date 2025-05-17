@@ -1,10 +1,17 @@
+import { auth } from "@/auth";
 import { InsightsCard } from "@/components/debts/insights-card";
 import { SiteHeader } from "@/components/home/site-header";
 import { SectionCardsInsights } from "@/components/insights/section-cards";
 import { fetchUserInsightsFromApi } from "@/lib/fetch-insights";
 
 export default async function DebtsPage() {
-  const insights = await fetchUserInsightsFromApi();
+  const session = await auth();
+
+  if (!session?.user) return null;
+
+  const insights = await fetchUserInsightsFromApi(
+    parseInt(session.user.user_id)
+  );
   return (
     <>
       <SiteHeader

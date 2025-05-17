@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import { Card } from "@/components/ui/card";
 import {
   getCurrentMthNetCashFlowByUser,
@@ -6,9 +7,19 @@ import {
 } from "@/db/transactions";
 
 export default async function NetMoney() {
-  const netCashFlow = await getCurrentMthNetCashFlowByUser();
-  const currentTransactionsCount = await getCurrentMthTransactionsAmount();
-  const previousTransactionsCount = await getPreviousMthTransactionsAmount();
+  const session = await auth();
+
+  if (!session?.user) return null;
+
+  const netCashFlow = await getCurrentMthNetCashFlowByUser(
+    parseInt(session.user.user_id)
+  );
+  const currentTransactionsCount = await getCurrentMthTransactionsAmount(
+    parseInt(session.user.user_id)
+  );
+  const previousTransactionsCount = await getPreviousMthTransactionsAmount(
+    parseInt(session.user.user_id)
+  );
   return (
     <Card className="divide-border grid grid-rows-2 divide-y p-7">
       <div className="flex flex-col items-center justify-center text-center">

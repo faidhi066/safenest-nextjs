@@ -12,11 +12,14 @@ import { Button } from "../ui/button";
 import { Card, CardFooter, CardHeader, CardTitle } from "../ui/card";
 import { InsightsCard } from "./insights-card";
 
+interface DebtsClientPageProps {
+  initialInsights: RootInsights;
+  userId: number;
+}
 export function DebtsClientPage({
   initialInsights,
-}: {
-  initialInsights: RootInsights;
-}) {
+  userId,
+}: DebtsClientPageProps) {
   const [newInsights, setNewInsights] = useState<
     NewInsightsRootSchema | undefined
   >();
@@ -26,7 +29,7 @@ export function DebtsClientPage({
     setLoading(true);
     try {
       const response = await fetch(
-        "https://safenest-api.onrender.com/users/2/insights/financial_report",
+        `https://safenest-api.onrender.com/users/${userId}/insights/financial_report`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
