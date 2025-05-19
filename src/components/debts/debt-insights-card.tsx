@@ -21,7 +21,7 @@ const priorityStyles = {
 };
 type Priority = keyof typeof priorityStyles;
 
-export function InsightsCard({
+export function DebtInsightsCard({
   insights,
   debtOrSavings,
 }: {
@@ -84,7 +84,7 @@ export function InsightsCard({
 
                     <DialogContent className="max-w-2xl">
                       <DialogTitle className="text-2xl font-semibold">
-                        Mortgage Payoff Timeline
+                        {insight.insight_title}
                       </DialogTitle>
                       <DialogHeader>
                         {/* Title + badge side by side */}

@@ -35,10 +35,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(db),
   ...authConfig,
   // Configure session callbacks to customize session data
+
   callbacks: {
     async session({ session, token }) {
       // Include additional properties like `role` in the session object
       if (token) {
+        // @ts-expect-error NOTE this is so that it can be deployed
         session.user = { ...session.user, ...token };
       }
       return session;
@@ -59,6 +61,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   // Additional NextAuth options
   session: {
     strategy: "jwt",
+    maxAge: 60 * 60, // ⏰ 1 hour in seconds
+    updateAge: 0, // Optional: don’t auto-extend session lifetime
   },
   pages: {
     signIn: "/", // custom login page

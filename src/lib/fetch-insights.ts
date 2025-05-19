@@ -24,7 +24,7 @@ export async function fetchUserInsightsFromApi(
   }
 
   const data = await res.json();
-  console.log(data);
+  console.log("DATA", data);
   const parsed = RootInsightsSchema.safeParse(data);
   if (!parsed.success) {
     throw new Error("Invalid data structure received from API");

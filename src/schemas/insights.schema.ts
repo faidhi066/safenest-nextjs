@@ -29,7 +29,7 @@ const PriorityAssessmentSchema = z.object({
 
 export const FullInsightsSchema = z.object({
   financial_report_markdown_summary: z.string(),
-  transaction_summary_markdown: z.string(),
+  // transaction_summary_markdown: z.string(),
   priority_assessment: PriorityAssessmentSchema,
   report_generated_at: z.string(),
   savings_insights: InsightsSchema,

@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { InsightsCard } from "@/components/debts/insights-card";
+import { DebtInsightsCard } from "@/components/debts/debt-insights-card";
 import { SiteHeader } from "@/components/home/site-header";
 import { SectionCardsInsights } from "@/components/insights/section-cards";
 import { fetchUserInsightsFromApi } from "@/lib/fetch-insights";
@@ -45,7 +45,7 @@ export default async function DebtsPage() {
                   <h2 className="text-primary mb-2 text-xl font-semibold">
                     Debt Analysis
                   </h2>
-                  <InsightsCard insights={insights} debtOrSavings="debt" />
+                  <DebtInsightsCard insights={insights} debtOrSavings="debt" />
                 </div>
 
                 {/* Section: Economic Analysis */}
@@ -53,7 +53,10 @@ export default async function DebtsPage() {
                   <h2 className="text-primary mb-2 text-xl font-semibold">
                     Saving Analysis
                   </h2>
-                  <InsightsCard insights={insights} debtOrSavings="savings" />
+                  <DebtInsightsCard
+                    insights={insights}
+                    debtOrSavings="savings"
+                  />
                 </div>
               </div>
 

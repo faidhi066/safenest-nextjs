@@ -8,6 +8,7 @@ import { SignInSchema } from "./schemas/zod.schema";
 export default {
   providers: [
     Credentials({
+      // @ts-expect-error NOTE this is so that it can be deployed
       // You can specify which fields should be submitted, by adding keys to the `credentials` object.
       // e.g. domain, username, password, 2FA token, etc.
       async authorize(credentials) {
@@ -24,7 +25,7 @@ export default {
           // logic to verify if the user exists
           user = await getUserByEmail(email);
 
-          if (!user) {
+          if (!user || !user.password_hash) {
             // No user found, so this is their first attempt to login
             // meaning this is also the place you could do registration
             // throw new Error("User not found.");

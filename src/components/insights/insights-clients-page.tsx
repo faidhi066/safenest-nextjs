@@ -5,25 +5,27 @@ import { useState } from "react";
 import { RefreshCw } from "lucide-react";
 
 import { RootInsights } from "@/schemas/insights.schema";
-import { NewInsightsRootSchema } from "@/schemas/new-insights.schema";
+import {
+  NewRootInsights,
+  NewRootInsightsSchema,
+} from "@/schemas/new-insights.schema";
 
+import { DebtInsightsCard } from "../debts/debt-insights-card";
 import { SiteHeader } from "../home/site-header";
 import { Button } from "../ui/button";
 import { Card, CardFooter, CardHeader, CardTitle } from "../ui/card";
-import { InsightsCard } from "./insights-card";
 
-interface DebtsClientPageProps {
+interface InsightClientPageProps {
   initialInsights: RootInsights;
   userId: number;
 }
-export function DebtsClientPage({
+export function InsightsClientPage({
   initialInsights,
   userId,
-}: DebtsClientPageProps) {
-  const [newInsights, setNewInsights] = useState<
-    NewInsightsRootSchema | undefined
-  >();
+}: InsightClientPageProps) {
+  const [newInsights, setNewInsights] = useState<NewRootInsights | undefined>();
   const [loading, setLoading] = useState(false);
+  const [failed, setFailed] = useState(false);
 
   const regenerateInsights = async () => {
     setLoading(true);
@@ -32,14 +34,14 @@ export function DebtsClientPage({
         `https://safenest-api.onrender.com/users/${userId}/insights/financial_report`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
         }
       );
+      console.log("Response status:", response.status);
 
       if (!response.ok) throw new Error("Failed to regenerate");
 
       const rawData = await response.json();
-      const parsed = NewInsightsRootSchema.safeParse(rawData);
+      const parsed = NewRootInsightsSchema.safeParse(rawData);
 
       if (!parsed.success) {
         console.error("Schema validation failed", parsed.error.format());
@@ -50,7 +52,9 @@ export function DebtsClientPage({
       setNewInsights(parsed.data); // parsed.data is guaranteed to be RootInsights
     } catch (err) {
       console.error(err);
-      alert("Something went wrong.");
+      setFailed(true); // ✅ mark failure state
+
+      // alert("Something went wrong.");
     } finally {
       setLoading(false);
     }
@@ -75,7 +79,7 @@ export function DebtsClientPage({
                   <h2 className="text-primary mb-4 text-xl font-semibold">
                     Debt Analysis
                   </h2>
-                  <InsightsCard
+                  <DebtInsightsCard
                     insights={initialInsights}
                     debtOrSavings="debt"
                   />
@@ -85,7 +89,7 @@ export function DebtsClientPage({
                   <h2 className="text-primary mb-4 text-xl font-semibold">
                     Saving Analysis
                   </h2>
-                  <InsightsCard
+                  <DebtInsightsCard
                     insights={initialInsights}
                     debtOrSavings="savings"
                   />
@@ -98,7 +102,11 @@ export function DebtsClientPage({
                   onClick={regenerateInsights}
                   disabled={loading}
                 >
-                  {loading ? "Regenerating..." : "Regenerate Insights"}
+                  {loading
+                    ? "Regenerating..."
+                    : failed
+                      ? "Failed. Try again?"
+                      : "Regenerate Insights"}
                   <RefreshCw
                     className={`ml-2 h-4 w-4 ${loading && "animate-spin"}`}
                   />

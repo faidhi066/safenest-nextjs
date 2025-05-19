@@ -1,9 +1,9 @@
 import { auth } from "@/auth";
-import { DebtsClientPage } from "@/components/debts/debts-clients-page";
+import { InsightsClientPage } from "@/components/insights/insights-clients-page";
 // create this
 import { fetchUserInsightsFromApi } from "@/lib/fetch-insights";
 
-export default async function DebtsPage() {
+export default async function InsightsPage() {
   const session = await auth();
 
   if (!session?.user) return null;
@@ -12,5 +12,5 @@ export default async function DebtsPage() {
     parseInt(session.user.user_id)
   );
 
-  return <DebtsClientPage initialInsights={insights} userId={userId} />;
+  return <InsightsClientPage initialInsights={insights} userId={userId} />;
 }

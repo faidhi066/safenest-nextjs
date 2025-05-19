@@ -23,7 +23,7 @@ export const DebtInsightsSchema = z.object({
   summary: z.string(),
 });
 
-export const NewInsightsRootSchema = z.object({
+export const NewRootInsightsSchema = z.object({
   financial_report_markdown_summary: z.string(),
   transaction_summary_markdown: z.string(),
   priority_assessment: PriorityAssessmentSchema,
@@ -33,4 +33,4 @@ export const NewInsightsRootSchema = z.object({
 });
 
 // Optional: Export type from Zod schema
-export type NewInsightsRootSchema = z.infer<typeof NewInsightsRootSchema>;
+export type NewRootInsights = z.infer<typeof NewRootInsightsSchema>;

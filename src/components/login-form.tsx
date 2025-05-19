@@ -47,7 +47,6 @@ export function LoginForm({
 
     try {
       const data = await login(values);
-      console.log("Hahahah", data);
 
       if (data.errorEmail || data.errorPassword) {
         setErrorEmail(data.errorEmail);
